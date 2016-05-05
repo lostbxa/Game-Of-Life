@@ -24,7 +24,7 @@ namespace Game_Of_Life
             InitializeComponent();
             timer1.Interval = 100;
             timer1.Enabled = true;
-            
+            timer1.Stop();
         }
         private void graphicsPanel1_Paint(object sender, PaintEventArgs e)
         {
@@ -177,6 +177,19 @@ namespace Game_Of_Life
                 timer1.Start();
                 on = true;
             }
+        }
+
+        private void changeSizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void copyToolStripButton_Click(object sender, EventArgs e)
+        {
+            gen++;
+            generation.Text = "Generations: " + gen.ToString();
+            GenerationChange();
+            graphicsPanel1.Invalidate();
         }
     }
 }

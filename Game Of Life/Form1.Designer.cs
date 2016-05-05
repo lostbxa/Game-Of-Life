@@ -72,6 +72,7 @@
             this.generation = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.graphicsPanel1 = new Game_Of_Life.GraphicsPanel();
+            this.changeSizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.generations.SuspendLayout();
@@ -245,14 +246,16 @@
             // 
             // customizeToolStripMenuItem
             // 
+            this.customizeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.changeSizeToolStripMenuItem});
             this.customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
-            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(153, 26);
+            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
             this.customizeToolStripMenuItem.Text = "&Customize";
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(153, 26);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
             // helpToolStripMenuItem
@@ -366,6 +369,7 @@
             this.copyToolStripButton.Name = "copyToolStripButton";
             this.copyToolStripButton.Size = new System.Drawing.Size(24, 24);
             this.copyToolStripButton.Text = "&Copy";
+            this.copyToolStripButton.Click += new System.EventHandler(this.copyToolStripButton_Click);
             // 
             // pasteToolStripButton
             // 
@@ -423,6 +427,13 @@
             this.graphicsPanel1.TabIndex = 3;
             this.graphicsPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.graphicsPanel1_Paint);
             this.graphicsPanel1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.graphicsPanel1_MouseClick);
+            // 
+            // changeSizeToolStripMenuItem
+            // 
+            this.changeSizeToolStripMenuItem.Name = "changeSizeToolStripMenuItem";
+            this.changeSizeToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+            this.changeSizeToolStripMenuItem.Text = "Change Size";
+            this.changeSizeToolStripMenuItem.Click += new System.EventHandler(this.changeSizeToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -491,6 +502,7 @@
         private GraphicsPanel graphicsPanel1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ToolStripStatusLabel generation;
+        private System.Windows.Forms.ToolStripMenuItem changeSizeToolStripMenuItem;
     }
 }
 
