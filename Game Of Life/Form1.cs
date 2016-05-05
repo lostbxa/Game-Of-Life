@@ -12,12 +12,11 @@ namespace Game_Of_Life
 {
     public partial class Form1 : Form
     {
-        bool[,] universe = new bool[20,20];
-        bool[,] scratchpad = new bool[20,20];
-        int[,] neighbors = new int[20, 20];
-        int sizeX = 20;
-        int sizeY = 20;
-        int size = 20;
+        bool[,] universe = new bool[5,5];
+        bool[,] scratchpad = new bool[5,5];
+        int sizeX = 5;
+        int sizeY = 5;
+        int size = 5;
         int gen = 0;
         bool on = true;
         public Form1()
@@ -25,7 +24,7 @@ namespace Game_Of_Life
             InitializeComponent();
             timer1.Interval = 100;
             timer1.Enabled = true;
-            timer1.Start();
+            
         }
         private void graphicsPanel1_Paint(object sender, PaintEventArgs e)
         {
@@ -101,23 +100,8 @@ namespace Game_Of_Life
         {
             gen++;
             generation.Text = "Generations: " + gen.ToString();
-            ProcessGeneration();
-        }
-        void GenerationChange()
-        {
-            scratchpad = universe;
-
-            for (int x = 0; x < universe.GetLength(0); x++)
-            {
-                for (int y = 0; y < universe.GetLength(1); y++)
-                {
-                    if (scratchpad[x, y] == true)
-                    {
-
-                    }
-                }
-            }
-            graphicsPanel1.Invalidate();          
+            GenerationChange();
+            graphicsPanel1.Invalidate();
         }
         private static int chekNeigburs(bool[,] universe, int size, int x, int y, int offsetx, int offsety)
         {
@@ -132,7 +116,7 @@ namespace Game_Of_Life
             }
             return result;
         }
-        private void ProcessGeneration()
+        private void GenerationChange()
         {
 
             for (int a = 0; a < sizeX; a++)
@@ -146,7 +130,7 @@ namespace Game_Of_Life
             {
                 for (int y = 0; y < sizeY; y++)
                 {
-                    int neighburs = chekNeigburs(universe, 20, x, y, -1, 0 + chekNeigburs(universe, 20, x, y, -1, 1) + chekNeigburs(universe, 20, x, y, 0, 1)  + chekNeigburs(universe, 20, x, y, 1, 1) + chekNeigburs(universe, 20, x, y, 1, 0)  + chekNeigburs(universe, 20, x, y, 1, -1)  + chekNeigburs(universe, 20, x, y, 0, -1) + chekNeigburs(universe, 20, x, y, -1, -1));
+                    int neighburs = chekNeigburs(universe, size, x, y, -1, 0) + chekNeigburs(universe, size, x, y, -1, 1) + chekNeigburs(universe, size, x, y, 0, 1)  + chekNeigburs(universe, size, x, y, 1, 1) + chekNeigburs(universe, size, x, y, 1, 0)  + chekNeigburs(universe, size, x, y, 1, -1)  + chekNeigburs(universe, size, x, y, 0, -1) + chekNeigburs(universe, size, x, y, -1, -1);
                     bool shouldLive = false;
                     bool isAlive = universe[x, y];
 
@@ -154,7 +138,7 @@ namespace Game_Of_Life
                     {
                         shouldLive = true;
                     }
-                    else if (!isAlive && neighburs == 3) // zombification
+                    else if (!isAlive && neighburs == 3) 
                     {
                         shouldLive = true;
                     }
@@ -162,15 +146,13 @@ namespace Game_Of_Life
                     scratchpad[x, y] = shouldLive;
                 }
             }
-            for (int a = 0; a < 20; a++)
+            for (int a = 0; a < size; a++)
             {
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < size; i++)
                 {
                      universe[a, i] =scratchpad[a, i];
                 }
             }
-
-            graphicsPanel1.Invalidate();
         }
         private void toolStripStatusLabel1_Click(object sender, EventArgs e)
         {
