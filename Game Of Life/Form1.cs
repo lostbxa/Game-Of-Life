@@ -7,39 +7,45 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using Game_Of_Life.Properties;
 namespace Game_Of_Life
 {
     public partial class Form1 : Form
     {
-        bool[,] universe = new bool[5,5];
-        bool[,] scratchpad = new bool[5,5];
-        int sizeX = 5;
-        int sizeY = 5;
-        int size = 5;
+        //Create the necessary basics for the universe
+        bool[,] universe = new bool[Settings.Default.X, Settings.Default.Y];
+        bool[,] scratchpad = new bool[Settings.Default.X, Settings.Default.Y];
+        int sizeX = Settings.Default.X;
+        int sizeY = Settings.Default.Y;
+        int liveCount = 0;
+        Pen p3n = new Pen(Color.Black);
+        SolidBrush b = new SolidBrush(Color.Gray);
         int gen = 0;
         bool on = true;
         public Form1()
         {
             InitializeComponent();
-            timer1.Interval = 100;
+            timer1.Interval = 20;
             timer1.Enabled = true;
             timer1.Stop();
         }
         private void graphicsPanel1_Paint(object sender, PaintEventArgs e)
         {
-            Pen p3n = new Pen(Color.Black);
+
+            liveCount = 0;
             float width = graphicsPanel1.Width / universe.GetLength(0);
             float height = graphicsPanel1.Height / universe.GetLength(1);
             RectangleF[] rekts = new RectangleF[1];
-            for (int x = 0; x < universe.GetLength(0); x++)
+            //iterate through the list and draw rectangles according to their current status
+            for (int x = 0; x < sizeX; x++)
             {
-                for (int y = 0; y < universe.GetLength(1); y++)
+                for (int y = 0; y < sizeY; y++)
                 {
                     if (universe[x,y] == true)
                     {
                         RectangleF rekt = new RectangleF(new PointF(x * width, y * height), new SizeF(width, height));
-                        e.Graphics.FillRectangle(Brushes.Gray, rekt);
+                        e.Graphics.FillRectangle(b, rekt);
+                        liveCount++;
                     }
                     else
                     {
@@ -49,16 +55,16 @@ namespace Game_Of_Life
                     }
                 }
             }
-
         }
 
         private void graphicsPanel1_MouseClick(object sender, MouseEventArgs e)
         {
 
-            int width = graphicsPanel1.Width / universe.GetLength(0);
-            int height = graphicsPanel1.Height / universe.GetLength(1);
+            int width = graphicsPanel1.Width / sizeX;
+            int height = graphicsPanel1.Height /sizeY;
             try
             {
+                //set the 
                 if (universe[e.X / width, e.Y / height] == true)
                 {
                     universe[e.X / width, e.Y / height] = false;
@@ -71,7 +77,7 @@ namespace Game_Of_Life
             }
             catch (IndexOutOfRangeException)
             {
-
+            
                 
             }
             
@@ -100,6 +106,7 @@ namespace Game_Of_Life
         {
             gen++;
             generation.Text = "Generations: " + gen.ToString();
+            liveCells.Text = "Live Cells: " + liveCount;
             GenerationChange();
             graphicsPanel1.Invalidate();
         }
@@ -109,7 +116,7 @@ namespace Game_Of_Life
 
             int OffsetX = x + offsetx;
             int OffsetY = y + offsety;
-            bool outOfBounds = OffsetX < 0 || OffsetX >= size | OffsetY < 0 || OffsetY >= size;
+            bool outOfBounds = OffsetX < 0 || OffsetX >= universe.GetLength(0) | OffsetY < 0 || OffsetY >= universe.GetLength(1);
             if (!outOfBounds)
             {
                 result = universe[x + offsetx, y + offsety] ? 1 : 0;
@@ -130,7 +137,7 @@ namespace Game_Of_Life
             {
                 for (int y = 0; y < sizeY; y++)
                 {
-                    int neighburs = chekNeigburs(universe, size, x, y, -1, 0) + chekNeigburs(universe, size, x, y, -1, 1) + chekNeigburs(universe, size, x, y, 0, 1)  + chekNeigburs(universe, size, x, y, 1, 1) + chekNeigburs(universe, size, x, y, 1, 0)  + chekNeigburs(universe, size, x, y, 1, -1)  + chekNeigburs(universe, size, x, y, 0, -1) + chekNeigburs(universe, size, x, y, -1, -1);
+                    int neighburs = chekNeigburs(universe, sizeX , x, y, -1, 0) + chekNeigburs(universe, sizeX , x, y, -1, 1) + chekNeigburs(universe, sizeX , x, y, 0, 1)  + chekNeigburs(universe, sizeX , x, y, 1, 1) + chekNeigburs(universe, sizeX, x, y, 1, 0)  + chekNeigburs(universe, sizeX , x, y, 1, -1)  + chekNeigburs(universe, sizeX , x, y, 0, -1) + chekNeigburs(universe, sizeX, x, y, -1, -1);
                     bool shouldLive = false;
                     bool isAlive = universe[x, y];
 
@@ -146,9 +153,9 @@ namespace Game_Of_Life
                     scratchpad[x, y] = shouldLive;
                 }
             }
-            for (int a = 0; a < size; a++)
+            for (int a = 0; a < sizeX; a++)
             {
-                for (int i = 0; i < size; i++)
+                for (int i = 0; i < sizeY; i++)
                 {
                      universe[a, i] =scratchpad[a, i];
                 }
@@ -170,6 +177,7 @@ namespace Game_Of_Life
             {
                 timer1.Stop();
                 on = false;
+
             }
 
             else if (!on)
@@ -181,7 +189,17 @@ namespace Game_Of_Life
 
         private void changeSizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Size_Change chng = new Size_Change();
+            if (chng.ShowDialog() == DialogResult.OK)
+            {
 
+                sizeX = chng.X;
+                sizeY = chng.Y;
+                universe = new bool[sizeX, sizeY];
+                scratchpad = new bool[sizeX, sizeY];
+                graphicsPanel1.Invalidate();
+
+            }
         }
 
         private void copyToolStripButton_Click(object sender, EventArgs e)
@@ -190,6 +208,63 @@ namespace Game_Of_Life
             generation.Text = "Generations: " + gen.ToString();
             GenerationChange();
             graphicsPanel1.Invalidate();
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            graphicsPanel1.Refresh();
+        }
+
+
+        private void Form1_FormClosed_1(object sender, FormClosedEventArgs e)
+        {
+            Properties.Settings.Default.X = sizeX;
+            Properties.Settings.Default.Y = sizeY;
+            Properties.Settings.Default.Save();
+            Properties.Settings.Default.bgc = graphicsPanel1.BackColor;
+        }
+
+        private void changeColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog dlg = new ColorDialog();
+
+            dlg.Color = graphicsPanel1.BackColor;
+
+            if (DialogResult.OK == dlg.ShowDialog())
+            {
+                graphicsPanel1.BackColor = dlg.Color;
+            }
+
+        }
+
+        private void changeLiveColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog dlg = new ColorDialog();
+
+            dlg.Color = graphicsPanel1.BackColor;
+
+            if (DialogResult.OK == dlg.ShowDialog())
+            {
+                b.Color = dlg.Color;
+            }
+
+        }
+
+        private void changeLineColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog dlg = new ColorDialog();
+
+            dlg.Color = graphicsPanel1.BackColor;
+
+            if (DialogResult.OK == dlg.ShowDialog())
+            {
+                p3n.Color = dlg.Color;
+            }
+        }
+
+        private void customizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
